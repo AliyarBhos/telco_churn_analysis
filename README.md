@@ -104,7 +104,8 @@ telco-churn-analysis/
 │   └── Cleaned_Telco_Churn_Dataset.csv  ← Cleaned (output of notebook)
 │
 ├── notebooks/
-│   └── main.ipynb                       ← Cleaning, EDA & feature engineering
+│   ├── main.ipynb                       ← Cleaning, EDA & feature engineering
+│   └── eda_report.html                  ← Auto-generated profiling report (open in browser)
 │
 ├── dashboard/
 │   └── Customer_Churn_Analysis.pbix     ← Power BI dashboard
@@ -120,9 +121,10 @@ telco-churn-analysis/
 ## 🔧 What Was Done in Python
 
 **Data Cleaning:**
-- Converted `TotalCharges` from object to numeric (had 11 hidden blank strings)
+- Converted `TotalCharges` from object to numeric (had 11 hidden blank strings masking as valid data)
 - Dropped 11 rows with missing `TotalCharges` (0.15% of data — safe to drop)
 - Dropped `customerID` (not analytically useful)
+- Fixed `No internet service` and `No phone service` values mapped correctly during encoding to avoid silent NaN creation
 
 **Feature Engineering:**
 - `Security_Score` — sum of OnlineSecurity + OnlineBackup + DeviceProtection (0–3 scale)
@@ -131,6 +133,9 @@ telco-churn-analysis/
 - `num_services` — count of active services per customer
 
 **Key Design Decision:** Original columns were never mutated — all derived features created as new columns. This kept the data clean for Power BI analysis while engineering useful signals.
+
+**Automated EDA Report:**
+Generated a full profiling report using `ydata-profiling` covering correlations, missing values, distributions and interactions across all 21 features. Open `notebooks/eda_report.html` in a browser to view it.
 
 ---
 
@@ -142,7 +147,7 @@ telco-churn-analysis/
 Churn Rate % = DIVIDE(COUNTROWS(FILTER(customers, customers[Churn] = "Yes")), COUNTROWS(customers)) * 100
 ```
 - Built interactive dashboard with slicers for PaymentMethod, Partner, and TechSupport
-- Visualized all 7 key insights above
+- Visualized all 7 key insights above with appropriate chart types (bar, line, donut, KPI cards)
 
 ---
 
@@ -163,6 +168,7 @@ Churn Rate % = DIVIDE(COUNTROWS(FILTER(customers, customers[Churn] = "Yes")), CO
 | Pandas | Data manipulation |
 | Power BI | Interactive dashboard & DAX measures |
 | ydata-profiling | Automated EDA report |
+| Matplotlib / Seaborn | Supporting visualizations |
 
 ---
 
@@ -178,7 +184,10 @@ pip install pandas numpy matplotlib seaborn ydata-profiling
 # 3. Run the notebook
 jupyter notebook notebooks/main.ipynb
 
-# 4. Open the dashboard
+# 4. View EDA report
+# Open notebooks/eda_report.html in any browser
+
+# 5. Open the dashboard
 # Open dashboard/Customer_Churn_Analysis.pbix in Power BI Desktop
 ```
 
